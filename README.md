@@ -12,14 +12,14 @@ In this step, we are going to create a bare-bones server.
 
 ### Instructions
 
-* Run `npm init -y`.
-* Use npm to install `express`, `dotenv` and `massive`.
-* Create a `.env` file.
-  * Define a variable inside named `SERVER_PORT` and set it to `3000`.
-* Create a `.gitignore` to ignore the `node_modules` folder and the `.env` file.
-* Create an `index.js` file.
-* Require all the packages that we installed.
-* Get your server listening on port `3000`.
+- Run `npm init -y`.
+- Use npm to install `express`, `dotenv` and `massive`.
+- Create a `.env` file.
+  - Define a variable inside named `SERVER_PORT` and set it to `3000`.
+- Create a `.gitignore` to ignore the `node_modules` folder and the `.env` file.
+- Create an `index.js` file.
+- Require all the packages that we installed.
+- Get your server listening on port `3000`.
 
 <details>
 
@@ -38,9 +38,9 @@ SERVER_PORT = 3000
 After that, we're ready to start creating our server. Create an `index.js` file and `require` all the packages we install at the top.
 
 ```js
-require('dotenv').config()
-const express = require('express');
-const massive = require('massive');
+require("dotenv").config();
+const express = require("express");
+const massive = require("massive");
 ```
 
 Now that our `index.js` file has access to all our packages, let's create a basic server. We'll begin by saving `express()` to a variable called `app`.
@@ -102,7 +102,6 @@ app.use(express.json());
 app.listen(SERVER_PORT, () => {
   console.log(`Server listening on port ${SERVER_PORT}.`);
 });
-
 ```
 
 </details>
@@ -115,13 +114,13 @@ In this step, we are going to add massive to the server so we can connect to a d
 
 ### Instructions
 
-* Open the `.env` file and create a variable called `CONNECTION_STRING` that equals the URI connection string from your Heroku database.
-  * If you copy your connection string from SQL Tabs, make sure to remove the `?ssl=true` from the end.
-* Use `massive` and the `CONNECTION_STRING` to establish a connection.
-  * Envoke `massive` and pass in an object containing `connectionString` and `ssl` properties
-* In the `.then` callback from `massive`, set `db` on app to equal the database instance.
-* Make sure to add a `.catch()` with a callback function. 
-* In the callback of the `.catch`, `console.log` the error that would be received if the request was rejected.
+- Open the `.env` file and create a variable called `CONNECTION_STRING` that equals the URI connection string from your Heroku database.
+  - If you copy your connection string from SQL Tabs, make sure to remove the `?ssl=true` from the end.
+- Use `massive` and the `CONNECTION_STRING` to establish a connection.
+  - Envoke `massive` and pass in an object containing `connectionString` and `ssl` properties
+- In the `.then` callback from `massive`, set `db` on app to equal the database instance.
+- Make sure to add a `.catch()` with a callback function.
+- In the callback of the `.catch`, `console.log` the error that would be received if the request was rejected.
 
 <details>
 
@@ -143,8 +142,8 @@ const { SERVER_PORT, CONNECTION_STRING } = process.env;
 
 ```js
 massive({
-connectionString: CONNECTION_STRING,
-ssl: {rejectUnauthorized: false}
+  connectionString: CONNECTION_STRING,
+  ssl: { rejectUnauthorized: false },
 });
 ```
 
@@ -152,34 +151,33 @@ We'll want to execute some logic when the promise is fulfilled, so let's chain a
 
 ```js
 massive({
-connectionString: CONNECTION_STRING,
-ssl: {rejectUnauthorized: false}
-}).then(dbInstance => {});
+  connectionString: CONNECTION_STRING,
+  ssl: { rejectUnauthorized: false },
+}).then((dbInstance) => {});
 ```
 
 Now that we have the `dbInstance`, we can set it onto `app`. Let's have our function return `app.set('db', dbInstance)`.
 
 ```js
 massive({
-connectionString: CONNECTION_STRING,
-ssl: {rejectUnauthorized: false}
-})
-  .then(dbInstance => {
-    app.set('db', dbInstance);
-  });
+  connectionString: CONNECTION_STRING,
+  ssl: { rejectUnauthorized: false },
+}).then((dbInstance) => {
+  app.set("db", dbInstance);
+});
 ```
 
 Finally, we need to add a `.catch` so that we can `console.log` any error we might receive. Do so by chaining `.catch` after the `.then`. The `.catch` takes a callback function. Name the callback function parameter `err`. If `.catch` is invoked, `err` will be the error that was received. Add a `console.log` to log the error.
 
 ```js
 massive({
-connectionString: CONNECTION_STRING,
-ssl: {rejectUnauthorized: false}
+  connectionString: CONNECTION_STRING,
+  ssl: { rejectUnauthorized: false },
 })
-  .then(dbInstance => {
+  .then((dbInstance) => {
     app.set("db", dbInstance);
   })
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 ```
 
 </details>
@@ -200,20 +198,19 @@ const app = express();
 const { SERVER_PORT, CONNECTION_STRING } = process.env;
 
 massive({
-connectionString: CONNECTION_STRING,
-ssl: {rejectUnauthorized: false}
+  connectionString: CONNECTION_STRING,
+  ssl: { rejectUnauthorized: false },
 })
-  .then(dbInstance => {
+  .then((dbInstance) => {
     app.set("db", dbInstance);
   })
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 
 app.use(express.json());
 
 app.listen(SERVER_PORT, () => {
   console.log(`Server listening on port ${SERVER_PORT}.`);
 });
-
 ```
 
 </details>
@@ -224,38 +221,38 @@ app.listen(SERVER_PORT, () => {
 
 In this step, we are going to create our table and the `.sql` files we'll need to preform operations on our data. The schema for our table will look like:
 
-* product_id - Serial Primary Key
-* name - varchar(40)
-* description - varchar(80)
-* price - integer
-* image_url - text
+- product_id - Serial Primary Key
+- name - varchar(40)
+- description - varchar(80)
+- price - integer
+- image_url - text
 
 Note: SQLTabs may highlight `name` and `description`. Use them as your column names anyway, otherwise your Postman tests will fail.
 
 ### Instructions
 
-* Create a `product` table in your Heroku database.
-* Create a folder called `db`.
-  * Create a `create_product.sql` file.
-  * Create a `read_products.sql` file.
-  * Create a `read_product.sql` file.
-  * Create a `update_product.sql` file.
-  * Create a `delete_product.sql` file.
-* `create_product.sql`:
-  * The SQL should be able to add a new product to the `product` table.
-  * The SQL should have four parameters ( name, description, price, image_url ).
-* `read_products.sql`:
-  * The SQL should be able to return all products from the `product` table.
-* `read_product.sql`:
-  * The SQL should be able to return a specific product from the `product` table.
-  * The SQL should use a parameter to find the product whose `product_id` matches.
-* `update_product.sql`:
-  * The SQL should be able to update the description of a specific product from the `product` table.
-  * The SQL should use a parameter to find the product whose `product_id` matches.
-  * The SQL should use a parameter to update the value of the `description`.
-* `delete_product.sql`:
-  * The SQL should be able to delete a specific product from the `product` table.
-  * The SQL should use a parameter to find the product whose `product_id` matches.
+- Create a `product` table in your Heroku database.
+- Create a folder called `db`.
+  - Create a `create_product.sql` file.
+  - Create a `read_products.sql` file.
+  - Create a `read_product.sql` file.
+  - Create a `update_product.sql` file.
+  - Create a `delete_product.sql` file.
+- `create_product.sql`:
+  - The SQL should be able to add a new product to the `product` table.
+  - The SQL should have four parameters ( name, description, price, image_url ).
+- `read_products.sql`:
+  - The SQL should be able to return all products from the `product` table.
+- `read_product.sql`:
+  - The SQL should be able to return a specific product from the `product` table.
+  - The SQL should use a parameter to find the product whose `product_id` matches.
+- `update_product.sql`:
+  - The SQL should be able to update the description of a specific product from the `product` table.
+  - The SQL should use a parameter to find the product whose `product_id` matches.
+  - The SQL should use a parameter to update the value of the `description`.
+- `delete_product.sql`:
+  - The SQL should be able to delete a specific product from the `product` table.
+  - The SQL should use a parameter to find the product whose `product_id` matches.
 
 <details>
 
@@ -392,20 +389,20 @@ In this step, we will create a `products_controller.js` file that will handle th
 
 ### Instructions
 
-* Create a `products_controller.js` file.
-* Use `module.exports` to export an object with five methods.
-  * `create`, `getOne`, `getAll`, `update`, and `delete`.
-* Inside of each method, access the database instance.
-* Inside of each method, use the correct SQL file.
-  * `create` -> `create_product.sql`.
-  * `getOne` -> `read_product.sql`.
-  * `getAll` -> `read_products.sql`.
-  * `update` -> `update_product.sql`.
-  * `delete` -> `delete_product.sql`.
-* Don't worry about the parameter(s) in this step.
-* `create`, `update`, and `delete` should send status 200 on success and status 500 on failure with a message about how something went wrong.
-* `getOne` should send status 200 and the product on success and status 500 on failure with a message about how something went wrong (you can chose your own phrasing). Make sure to log the error to your console so you can read it if anything goes wrong.
-* `getAll` should send status 200 and the products on success and status 500 on failure with a message about how something went wrong (you can chose your own phrasing). Make sure to log the error to your console so you can read it if anything goes wrong.
+- Create a `products_controller.js` file.
+- Use `module.exports` to export an object with five methods.
+  - `create`, `getOne`, `getAll`, `update`, and `delete`.
+- Inside of each method, access the database instance.
+- Inside of each method, use the correct SQL file.
+  - `create` -> `create_product.sql`.
+  - `getOne` -> `read_product.sql`.
+  - `getAll` -> `read_products.sql`.
+  - `update` -> `update_product.sql`.
+  - `delete` -> `delete_product.sql`.
+- Don't worry about the parameter(s) in this step.
+- `create`, `update`, and `delete` should send status 200 on success and status 500 on failure with a message about how something went wrong.
+- `getOne` should send status 200 and the product on success and status 500 on failure with a message about how something went wrong (you can chose your own phrasing). Make sure to log the error to your console so you can read it if anything goes wrong.
+- `getAll` should send status 200 and the products on success and status 500 on failure with a message about how something went wrong (you can chose your own phrasing). Make sure to log the error to your console so you can read it if anything goes wrong.
 
 <details>
 
@@ -417,25 +414,25 @@ Now that we have all the `sql` files we'll need to interact with our database, l
 
 ```js
 module.exports = {
-  create: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  create: (req, res, next) => {
+    const dbInstance = req.app.get("db");
   },
 
-  getOne: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  getOne: (req, res, next) => {
+    const dbInstance = req.app.get("db");
   },
 
-  getAll: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  getAll: (req, res, next) => {
+    const dbInstance = req.app.get("db");
   },
 
-  update: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  update: (req, res, next) => {
+    const dbInstance = req.app.get("db");
   },
 
-  delete: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
-  }
+  delete: (req, res, next) => {
+    const dbInstance = req.app.get("db");
+  },
 };
 ```
 
@@ -443,60 +440,90 @@ Now that our methods have access to the `dbInstance` we can execute our sql file
 
 ```js
 module.exports = {
-  create: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  create: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.create_product()
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .create_product()
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  getOne: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  getOne: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.read_product()
-      .then( product => res.status(200).send( product ) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .read_product()
+      .then((product) => res.status(200).send(product))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  getAll: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  getAll: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.read_products()
-      .then( products => res.status(200).send( products ) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .read_products()
+      .then((products) => res.status(200).send(products))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  update: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  update: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.update_product()
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .update_product()
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  delete: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  delete: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.delete_product()
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
-  }
+    dbInstance
+      .delete_product()
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
+  },
 };
 ```
 
@@ -512,62 +539,93 @@ We'll worry about how to use parameters after we configure our routes. For right
 
 ```js
 module.exports = {
-  create: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  create: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.create_product()
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .create_product()
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  getOne: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  getOne: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.read_product()
-      .then( product => res.status(200).send( product ) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .read_product()
+      .then((product) => res.status(200).send(product))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  getAll: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  getAll: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.read_products()
-      .then( products => res.status(200).send( products ) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .read_products()
+      .then((products) => res.status(200).send(products))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  update: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  update: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.update_product()
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .update_product()
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  delete: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  delete: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.delete_product()
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
-  }
+    dbInstance
+      .delete_product()
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
+  },
 };
 ```
+
 </details>
 
 ## Step 5
@@ -578,12 +636,12 @@ In this step, we will create endpoints that will call the methods on our control
 
 ### Instructions
 
-* Create the following endpoints: ( `request method`, `url`, `controller method` )
-  * `GET` - `/api/products` - `getAll`.
-  * `GET` - `/api/products/:id` - `getOne`.
-  * `PUT` - `/api/products/:id` - `update`.
-  * `POST` - `/api/products` - `create`.
-  * `DELETE` - `/api/products/:id` - `delete`.
+- Create the following endpoints: ( `request method`, `url`, `controller method` )
+  - `GET` - `/api/products` - `getAll`.
+  - `GET` - `/api/products/:id` - `getOne`.
+  - `PUT` - `/api/products/:id` - `update`.
+  - `POST` - `/api/products` - `create`.
+  - `DELETE` - `/api/products/:id` - `delete`.
 
 ### Solution
 
@@ -602,30 +660,28 @@ const app = express();
 const { SERVER_PORT, CONNECTION_STRING } = process.env;
 
 massive({
-connectionString: CONNECTION_STRING,
-ssl: {rejectUnauthorized: false}
+  connectionString: CONNECTION_STRING,
+  ssl: { rejectUnauthorized: false },
 })
-  .then(dbInstance => {
+  .then((dbInstance) => {
     app.set("db", dbInstance);
   })
-  .catch(err => console.log(err));
+  .catch((err) => console.log(err));
 
 app.use(express.json());
 
-app.post('/api/products', products_controller.create);
-app.get('/api/products', products_controller.getAll);
-app.get('/api/products/:id', products_controller.getOne);
-app.put('/api/products/:id', products_controller.update);
-app.delete('/api/products/:id', products_controller.delete);
+app.post("/api/products", products_controller.create);
+app.get("/api/products", products_controller.getAll);
+app.get("/api/products/:id", products_controller.getOne);
+app.put("/api/products/:id", products_controller.update);
+app.delete("/api/products/:id", products_controller.delete);
 
 app.listen(SERVER_PORT, () => {
   console.log(`Server listening on port ${SERVER_PORT}.`);
 });
-
 ```
 
 </details>
-
 
 ## Step 6
 
@@ -635,12 +691,12 @@ In this step, we'll modify the controller to use parameters or the request body.
 
 ### Instructions
 
-* Open `products_controller.js`.
-* Modify `update` to use `id` from `req.params` and `desc` from `req.query`.
-* Modify `getOne` to use `id` from `req.params`.
-* Modify `delete` to use `id` from `req.params`.
-* Modify the `create` to use `name`, `description`, `price`, and `image_url` from the request body.
-* Something to remember, you do not need to use an array if you have only one argument to pass to the massive method.
+- Open `products_controller.js`.
+- Modify `update` to use `id` from `req.params` and `desc` from `req.query`.
+- Modify `getOne` to use `id` from `req.params`.
+- Modify `delete` to use `id` from `req.params`.
+- Modify the `create` to use `name`, `description`, `price`, and `image_url` from the request body.
+- Something to remember, you do not need to use an array if you have only one argument to pass to the massive method.
 
 <details>
 
@@ -652,64 +708,94 @@ Now that we know how our routes are configured, we can update our controller to 
 
 ```js
 module.exports = {
-  create: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  create: (req, res, next) => {
+    const dbInstance = req.app.get("db");
     const { name, description, price, image_url } = req.body;
 
-    dbInstance.create_product([ name, description, price, image_url ])
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .create_product([name, description, price, image_url])
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  getOne: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  getOne: (req, res, next) => {
+    const dbInstance = req.app.get("db");
     const { id } = req.params;
 
-    dbInstance.read_product( id )
-      .then( product => res.status(200).send( product ) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .read_product(id)
+      .then((product) => res.status(200).send(product))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  getAll: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  getAll: (req, res, next) => {
+    const dbInstance = req.app.get("db");
 
-    dbInstance.read_products()
-      .then( products => res.status(200).send( products ) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .read_products()
+      .then((products) => res.status(200).send(products))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  update: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  update: (req, res, next) => {
+    const dbInstance = req.app.get("db");
     const { params, query } = req;
 
-    dbInstance.update_product([ params.id, query.desc ])
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
+    dbInstance
+      .update_product([params.id, query.desc])
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
   },
 
-  delete: ( req, res, next ) => {
-    const dbInstance = req.app.get('db');
+  delete: (req, res, next) => {
+    const dbInstance = req.app.get("db");
     const { id } = req.params;
 
-    dbInstance.delete_product( id )
-      .then( () => res.sendStatus(200) )
-      .catch( err => {
-        res.status(500).send({errorMessage: "Oops! Something went wrong. Our engineers have been informed!"});
-        console.log(err)
-      } );
-  }
+    dbInstance
+      .delete_product(id)
+      .then(() => res.sendStatus(200))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
+      });
+  },
 };
 ```
 
@@ -724,63 +810,93 @@ module.exports = {
 ```js
 module.exports = {
   create: (req, res, next) => {
-    const dbInstance = req.app.get('db');
+    const dbInstance = req.app.get("db");
     const { name, description, price, image_url } = req.body;
 
-    dbInstance.create_product([name, description, price, image_url])
+    dbInstance
+      .create_product([name, description, price, image_url])
       .then(() => res.sendStatus(200))
-      .catch(err => {
-        res.status(500).send({ errorMessage: "Oops! Something went wrong. Our engineers have been informed!" });
-        console.log(err)
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
       });
   },
 
   getOne: (req, res, next) => {
-    const dbInstance = req.app.get('db');
+    const dbInstance = req.app.get("db");
     const { id } = req.params;
 
-    dbInstance.read_product(id)
-      .then(product => res.status(200).send(product))
-      .catch(err => {
-        res.status(500).send({ errorMessage: "Oops! Something went wrong. Our engineers have been informed!" });
-        console.log(err)
+    dbInstance
+      .read_product(id)
+      .then((product) => res.status(200).send(product))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
       });
   },
 
   getAll: (req, res, next) => {
-    const dbInstance = req.app.get('db');
+    const dbInstance = req.app.get("db");
 
-    dbInstance.read_products()
-      .then(products => res.status(200).send(products))
-      .catch(err => {
-        res.status(500).send({ errorMessage: "Oops! Something went wrong. Our engineers have been informed!" });
-        console.log(err)
+    dbInstance
+      .read_products()
+      .then((products) => res.status(200).send(products))
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
       });
   },
 
   update: (req, res, next) => {
-    const dbInstance = req.app.get('db');
+    const dbInstance = req.app.get("db");
     const { params, query } = req;
 
-    dbInstance.update_product([params.id, query.desc])
+    dbInstance
+      .update_product([params.id, query.desc])
       .then(() => res.sendStatus(200))
-      .catch(err => {
-        res.status(500).send({ errorMessage: "Oops! Something went wrong. Our engineers have been informed!" });
-        console.log(err)
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
       });
   },
 
   delete: (req, res, next) => {
-    const dbInstance = req.app.get('db');
+    const dbInstance = req.app.get("db");
     const { id } = req.params;
 
-    dbInstance.delete_product(id)
+    dbInstance
+      .delete_product(id)
       .then(() => res.sendStatus(200))
-      .catch(err => {
-        res.status(500).send({ errorMessage: "Oops! Something went wrong. Our engineers have been informed!" });
-        console.log(err)
+      .catch((err) => {
+        res
+          .status(500)
+          .send({
+            errorMessage:
+              "Oops! Something went wrong. Our engineers have been informed!",
+          });
+        console.log(err);
       });
-  }
+  },
 };
 ```
 
@@ -794,7 +910,7 @@ In this step, we'll test to make sure all the endpoint are working.
 
 ### Instructions
 
-* Import the provided `postman_collection` into `Postman` and make sure all the tests pass.
+- Import the provided `postman_collection` into `Postman` and make sure all the tests pass.
 
 ### Solution
 
@@ -802,10 +918,10 @@ In this step, we'll test to make sure all the endpoint are working.
 
 ## Black Diamond
 
-* Create a React front end to interact with your app.
-* Use express static to serve up your React files from a build folder.
-* Create a single view that can insert, read, update, and delete products.
-* Create a second view that just reads the products and displays them in a pretty way (like Jane.com or amazon).
+- Create a React front end to interact with your app.
+- Use express static to serve up your React files from a build folder.
+- Create a single view that can insert, read, update, and delete products.
+- Create a second view that just reads the products and displays them in a pretty way (like Jane.com or amazon).
 
 ## Resources
 
@@ -813,9 +929,9 @@ In this step, we'll test to make sure all the endpoint are working.
 
 <summary> <code> Massive </code> </summary>
 
-* [Database Functions](https://massivejs.org/docs/functions-and-scripts#database-functions)
-* [Express Example](https://massivejs.org/docs/framework-examples#express)
- _Note: In the example, they break up the connection string into pieces. We just use one long connection string_
+- [Database Functions](https://massivejs.org/docs/functions-and-scripts#database-functions)
+- [Express Example](https://massivejs.org/docs/framework-examples#express)
+  _Note: In the example, they break up the connection string into pieces. We just use one long connection string_
 
 </details>
 
@@ -823,12 +939,10 @@ In this step, we'll test to make sure all the endpoint are working.
 
 <summary> <code> SQL </code> </summary>
 
-* [SQL Teaching](http://www.sqlteaching.com/)
-* [SQL Bolt](http://sqlbolt.com/)
+- [SQL Teaching](http://www.sqlteaching.com/)
+- [SQL Bolt](http://sqlbolt.com/)
 
 </details>
-
-
 
 ## Contributions
 
